@@ -4,9 +4,10 @@
              x:Class="Csharp2_VoiceAssistant.MainPage"
              BackgroundColor="DarkRed"
              Title="Home">
-    <StackLayout    VerticalOptions="Center"
-                    HorizontalOptions="Center"
-                    Spacing="10">
+    
+    <StackLayout VerticalOptions="Center"
+                 HorizontalOptions="Center"
+                 Spacing="10">
         <Label Text="C# Voice assistant"
                FontSize="24"
                TextColor="CornflowerBlue" 
