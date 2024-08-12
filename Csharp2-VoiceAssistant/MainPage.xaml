@@ -2,8 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Csharp2_VoiceAssistant.MainPage"
+             BackgroundColor="DarkRed"
              Title="Home">
-    
-    
-    
+    <StackLayout    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    Spacing="10">
+        <Label Text="C# Voice assistant"
+               FontSize="24"
+               TextColor="CornflowerBlue" 
+               Padding="40" />
+        <Button Text="Instructions"
+                Clicked="Instructions_Clicked" />
+        <Button Text="History"
+                Clicked="History_Clicked" />
+        <Button Text="Settings"
+                Clicked="Settings_Clicked" />
+
+    </StackLayout>
+
 </ContentPage>
