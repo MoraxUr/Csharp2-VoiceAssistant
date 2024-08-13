@@ -2,9 +2,12 @@
 
 public partial class MainPage : ContentPage
 {
-public MainPage()
+    private readonly SpeechRecognitionService _speechRecognitionService;
+    public MainPage()
     {
         InitializeComponent();
+        _speechRecognitionService = new SpeechRecognitionService();
+        Task.Run(() => _speechRecognitionService.StartListening());
     }
 
     private async void Instructions_Clicked(object sender, EventArgs e)
@@ -19,6 +22,8 @@ public MainPage()
 
     private async void Settings_Clicked(object sender, EventArgs e)
     {
+        Console.WriteLine("SettingsPressed");
+        RecognitionTextLabel.Text = "SettingsPressed";
         await Navigation.PushAsync(new Settings());
     }
 }
