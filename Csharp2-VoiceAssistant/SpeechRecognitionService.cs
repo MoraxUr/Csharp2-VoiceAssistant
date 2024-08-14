@@ -6,10 +6,23 @@ namespace Csharp2_VoiceAssistant
     public class SpeechRecognitionService
     {
         private readonly VoskRecognizer _recognizer;
+        private bool _foundLaptop = false;
+        private TaskCompletionSource<bool> _taskCompletionSource;
 
+        public SpeechRecognitionService()
+        {
+            // Load Vosk model
+            string modelPath = GetModelPath();
+            Model model = new(modelPath);
+
+            // Initialize recognizer
+            _recognizer = new VoskRecognizer(model, 16000.0f);
+        }
+
+        // Loop to find project root directory independent of device
         public static string GetProjectRootDirectory()
         {
-            var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
+            DirectoryInfo? currentDirectory = new(AppContext.BaseDirectory);
 
             while (currentDirectory != null && !currentDirectory.GetFiles("*.csproj").Any())
             {
@@ -23,6 +36,8 @@ namespace Csharp2_VoiceAssistant
 
             return currentDirectory.FullName;
         }
+
+        // Method to set model (should be expanded to include language paramaters)
         public static string GetModelPath()
         {
             var projectRoot = GetProjectRootDirectory();
@@ -37,20 +52,14 @@ namespace Csharp2_VoiceAssistant
             return modelPath;
         }
 
-        public SpeechRecognitionService()
+        // Main Listening thread
+        public Task<bool> StartListening()
         {
-            // Load Vosk model
-            var modelPath = GetModelPath();
+            System.Diagnostics.Debug.WriteLine("start");
+            _foundLaptop = false ;
+            _taskCompletionSource = new TaskCompletionSource<bool>();
 
-            var model = new Model(modelPath);
-
-            // Initialize recognizer
-            _recognizer = new VoskRecognizer(model, 16000.0f);
-        }
-
-        public void StartListening()
-        {
-            using var waveIn = new WaveInEvent
+            var waveIn = new WaveInEvent
             {
                 WaveFormat = new WaveFormat(16000, 1)
             };
@@ -58,27 +67,70 @@ namespace Csharp2_VoiceAssistant
             waveIn.DataAvailable += OnDataAvailable;
             waveIn.StartRecording();
 
-            System.Diagnostics.Debug.WriteLine("Listening... Press Ctrl+C to stop.");
-            while (true) { } // Keep the app running for demonstration purposes
+            Task.Run(() =>
+            {
+                while (!_foundLaptop) { }
+                waveIn.StopRecording();
+                waveIn.Dispose();
+            });
+
+            return _taskCompletionSource.Task;
         }
 
+        // Checks every word entered to match with the word laptop
         private void OnDataAvailable(object sender, WaveInEventArgs e)
         {
             if (_recognizer.AcceptWaveform(e.Buffer, e.BytesRecorded))
             {
                 var result = _recognizer.Result();
-                System.Diagnostics.Debug.WriteLine($"Recognized: {result}");
+                //System.Diagnostics.Debug.WriteLine($"Recognized: {result}");
 
                 if (result.Contains("laptop", StringComparison.OrdinalIgnoreCase))
                 {
-                    System.Diagnostics.Debug.WriteLine("success");
+                    System.Diagnostics.Debug.WriteLine("success1");
+                    _foundLaptop = true;
+                    _taskCompletionSource.TrySetResult(true);
                 }
             }
             else
             {
                 var partialResult = _recognizer.PartialResult();
-                System.Diagnostics.Debug.WriteLine($"Partial: {partialResult}");
+                //System.Diagnostics.Debug.WriteLine($"Partial: {partialResult}");
             }
+        }
+
+        // Tries to find matching word after laptop is called
+        public async Task<int> MatchCommandAsync(List<string> commands, int durationInSeconds = 10)
+        {
+            var waveIn = new WaveInEvent
+            {
+                WaveFormat = new WaveFormat(16000, 1)
+            };
+
+            waveIn.StartRecording();
+
+            string recognizedText = string.Empty;
+            waveIn.DataAvailable += (sender, e) =>
+            {
+                if (_recognizer.AcceptWaveform(e.Buffer, e.BytesRecorded))
+                {
+                    recognizedText += _recognizer.Result();
+                }
+            };
+
+            await Task.Delay(durationInSeconds * 500);
+            waveIn.StopRecording();
+
+            for (int i = 0; i < commands.Count; i++)
+            {
+                if (recognizedText.Contains(commands[i], StringComparison.OrdinalIgnoreCase))
+                {
+                    waveIn.Dispose();
+                    return i; // Return the index of the matched command
+                }
+            }
+            waveIn.Dispose();
+            return -1; // No command matched
         }
     }
 }
