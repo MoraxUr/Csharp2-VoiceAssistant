@@ -98,7 +98,6 @@ public partial class MainPage : ContentPage
             {
                 var commandType = parts[1];
                 var parameter = parts[2];
-
                 switch (commandType)
                 {
                     case "VolumeCommand":

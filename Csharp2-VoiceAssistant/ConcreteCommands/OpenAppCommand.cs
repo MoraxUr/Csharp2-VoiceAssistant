@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 
+
 namespace Csharp2_VoiceAssistant.ConcreteCommands
 {
     public class OpenAppCommand : ICommand
@@ -12,8 +13,10 @@ namespace Csharp2_VoiceAssistant.ConcreteCommands
 
         public void Execute()
         {
-            // IMPLEMENTATION
             Debug.WriteLine($"OPEN APP: {_appName}");
+#if WINDOWS
+            Process.Start(new ProcessStartInfo( _appName + ":" ) { UseShellExecute = true });
+#endif
         }
     }
 }
