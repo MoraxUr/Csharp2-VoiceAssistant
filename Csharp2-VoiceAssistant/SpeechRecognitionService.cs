@@ -100,7 +100,7 @@ namespace Csharp2_VoiceAssistant
         }
 
         // Tries to find matching word after laptop is called
-        public async Task<int> MatchCommandAsync(List<string> commands, int durationInSeconds = 10)
+        public async Task<int> MatchCommandAsync(List<string> commands, int durationInSeconds = 8)
         {
             var waveIn = new WaveInEvent
             {
