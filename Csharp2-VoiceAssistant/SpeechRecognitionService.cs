@@ -1,4 +1,7 @@
-﻿using NAudio.Wave;
+﻿using NAudio.Mixer;
+using NAudio.Wave;
+using System.Diagnostics;
+using System.Text.Json;
 using Vosk;
 
 namespace Csharp2_VoiceAssistant
@@ -73,7 +76,6 @@ namespace Csharp2_VoiceAssistant
                 waveIn.StopRecording();
                 waveIn.Dispose();
             });
-
             return _taskCompletionSource.Task;
         }
 
@@ -88,6 +90,7 @@ namespace Csharp2_VoiceAssistant
                 if (result.Contains("laptop", StringComparison.OrdinalIgnoreCase))
                 {
                     System.Diagnostics.Debug.WriteLine("success1");
+                    History.AddToHistory(DateTime.Now.ToString(), "Laptop heard", "Moving to Commands");
                     _foundLaptop = true;
                     _taskCompletionSource.TrySetResult(true);
                 }
@@ -118,18 +121,40 @@ namespace Csharp2_VoiceAssistant
                 }
             };
 
-            await Task.Delay(durationInSeconds * 500);
+            await Task.Delay(durationInSeconds * 1000);
             waveIn.StopRecording();
 
             for (int i = 0; i < commands.Count; i++)
             {
                 if (recognizedText.Contains(commands[i], StringComparison.OrdinalIgnoreCase))
                 {
+                    History.AddToHistory(DateTime.Now.ToString(), "Recognized command", commands[i]);
                     waveIn.Dispose();
                     return i; // Return the index of the matched command
                 }
             }
             waveIn.Dispose();
+            try
+            {
+                if (string.IsNullOrEmpty(recognizedText))
+                {
+                    History.AddToHistory(DateTime.Now.ToString(), "An error occured trying to recognize a voice command", "error: No text error");
+                    return -1;
+                }
+                using (JsonDocument doc = JsonDocument.Parse(recognizedText))
+                {
+                    JsonElement root = doc.RootElement;
+                    if (root.TryGetProperty("text", out JsonElement textElement))
+                    {
+                        var text = textElement.GetString();
+                        History.AddToHistory(DateTime.Now.ToString(), "No command recognized", $"Text: {text}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Write(ex.Message);
+            }
             return -1; // No command matched
         }
     }
