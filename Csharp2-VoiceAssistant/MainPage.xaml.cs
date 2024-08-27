@@ -5,7 +5,6 @@ namespace Csharp2_VoiceAssistant;
 public partial class MainPage : ContentPage
 {
     private readonly SpeechRecognitionService _speechRecognitionService;
-    public enum AvailableCommands { VolumeCommand, OpenAppCommand, ScreenBrightnessCommand }
 
     public MainPage()
     {

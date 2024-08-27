@@ -1,4 +1,6 @@
 phrase,command_type,parameter
-"Dancing queen",VolumeCommand,50
-"Monkey",OpenAppCommand,Spotify
-"Test",ScreenBrightnessCommand,30
+Monkey,OpenAppCommand,Spotify
+Test,ScreenBrightnessCommand,30
+steam,OpenAppCommand,Steam
+steam,ScreenBrightnessCommand,100
+Dancing queen,VolumeCommand,100

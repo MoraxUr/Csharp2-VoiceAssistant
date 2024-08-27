@@ -4,4 +4,46 @@
              x:Class="Csharp2_VoiceAssistant.Instructions"
              Title="Instructions">
 
+    <StackLayout Padding="10">
+
+        <!-- Form to Add New Instruction -->
+        <StackLayout Orientation="Vertical" Padding="10">
+            <Label Text="Add New Instruction" FontAttributes="Bold" />
+
+            <Entry x:Name="KeywordEntry" Placeholder="Enter Keyword (Column1)" />
+            <Picker x:Name="CommandPicker" Title="Select Command (Column2)" />
+            <Entry x:Name="Column3Entry" Placeholder="Enter value for Column3" />
+
+            <Button Text="Add Instruction" Clicked="OnAddInstructionClicked" />
+        </StackLayout>
+
+        <!-- Display Instructions -->
+        <CollectionView x:Name="CsvCollectionView">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Orientation="Horizontal"
+                                 Padding="10">
+                        <Label Text="{Binding Column1}" />
+                        <Label Text="{Binding Column2}"
+                               Margin="20,0,0,0" />
+                        <Label Text="{Binding Column3}"
+                               Margin="20,0,0,0" />
+                        <!-- Trash icon to delete instruction -->
+                        <ImageButton Source="trash_icon.png"
+                                     Clicked="OnDeleteInstructionClicked"
+                                     CommandParameter="{Binding .}"
+                                     WidthRequest="24"
+                                     HeightRequest="24" />
+                        <!-- Edit button -->
+                        <ImageButton Source="edit_icon.png"
+                                     Clicked="OnEditInstructionClicked"
+                                     CommandParameter="{Binding .}"
+                                     WidthRequest="24"
+                                     HeightRequest="24" />
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </StackLayout>
+
 </ContentPage>
