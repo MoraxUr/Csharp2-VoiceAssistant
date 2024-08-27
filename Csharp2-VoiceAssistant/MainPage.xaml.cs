@@ -5,6 +5,8 @@ namespace Csharp2_VoiceAssistant;
 public partial class MainPage : ContentPage
 {
     private readonly SpeechRecognitionService _speechRecognitionService;
+    public enum AvailableCommands { VolumeCommand, OpenAppCommand, ScreenBrightnessCommand }
+
     public MainPage()
     {
         InitializeComponent();
@@ -18,14 +20,14 @@ public partial class MainPage : ContentPage
         if (recognizedKeyword)
         {
             // Define the list of commands to match (should be taken from csv or something)
-            List<string> commands = LoadAllCommandsFromCsv();
+            List<string> instructions = LoadAllInstructionsFromCsv();
 
             // Start listening for commands after detecting the keyword
-            int commandIndex = await _speechRecognitionService.MatchCommandAsync(commands);
+            int commandIndex = await _speechRecognitionService.MatchCommandAsync(instructions);
 
             if (commandIndex != -1)
             {
-                string matchedCommand = commands[commandIndex];
+                string matchedCommand = instructions[commandIndex];
                 System.Diagnostics.Debug.WriteLine($"Command matched: {matchedCommand}");
 
                 // Load the commands associated with the matched keyword
@@ -49,9 +51,9 @@ public partial class MainPage : ContentPage
         }
     }
 
-    public List<string> LoadAllCommandsFromCsv()
+    public List<string> LoadAllInstructionsFromCsv()
     {
-        List<string> commands = new List<string>();
+        List<string> instructions = new List<string>();
         var projectRoot = GetProjectRootDirectory();
         var filePath = Path.Combine(projectRoot, "commands.csv");
 
@@ -64,13 +66,13 @@ public partial class MainPage : ContentPage
         foreach (var line in lines)
         {
             var parts = line.Split(',');
-            string command = parts[0].Trim();
-            if (!commands.Contains(command))
+            string stringToMatch = parts[0].Trim();
+            if (!instructions.Contains(stringToMatch))
             {
-                commands.Add(command);
+                instructions.Add(stringToMatch);
             }
         }
-        return commands;
+        return instructions;
     }
 
     public List<ICommand> LoadCommandsFromCsv(string phrase)
@@ -98,17 +100,20 @@ public partial class MainPage : ContentPage
             {
                 var commandType = parts[1];
                 var parameter = parts[2];
-                switch (commandType)
+                if (Enum.TryParse(commandType, true, out AvailableCommands command))
                 {
-                    case "VolumeCommand":
-                        commands.Add(new VolumeCommand(int.Parse(parameter)));
-                        break;
-                    case "OpenAppCommand":
-                        commands.Add(new OpenAppCommand(parameter));
-                        break;
-                    case "ScreenBrightnessCommand":
-                        commands.Add(new ScreenBrightnessCommand(int.Parse(parameter)));
-                        break;
+                    switch (command)
+                    {
+                        case AvailableCommands.VolumeCommand:
+                            commands.Add(new VolumeCommand(int.Parse(parameter)));
+                            break;
+                        case AvailableCommands.OpenAppCommand:
+                            commands.Add(new OpenAppCommand(parameter));
+                            break;
+                        case AvailableCommands.ScreenBrightnessCommand:
+                            commands.Add(new ScreenBrightnessCommand(int.Parse(parameter)));
+                            break;
+                    }
                 }
             }
         }
@@ -145,7 +150,6 @@ public partial class MainPage : ContentPage
 
     private async void Settings_Clicked(object sender, EventArgs e)
     {
-        RecognitionTextLabel.Text = "SettingsPressed";
         await Navigation.PushAsync(new Settings());
     }
 }

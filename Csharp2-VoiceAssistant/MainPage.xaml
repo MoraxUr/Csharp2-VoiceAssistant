@@ -19,9 +19,6 @@
         <Button Text="Settings"
                 Clicked="Settings_Clicked" />
 
-        <Label x:Name="RecognitionTextLabel" 
-               Text="nothing"/>
-
     </StackLayout>
 
 </ContentPage>

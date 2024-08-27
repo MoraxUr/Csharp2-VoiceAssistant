@@ -28,7 +28,7 @@ public partial class History : ContentPage
 
         if (!File.Exists(filePath))
         {
-            throw new FileNotFoundException($"The command.csv at {filePath} was not found.");
+            throw new FileNotFoundException($"The history.csv at {filePath} was not found.");
         }
 
         foreach (var item in File.ReadLines(filePath))
