@@ -53,7 +53,7 @@ public partial class MainPage : ContentPage
     public List<string> LoadAllInstructionsFromCsv()
     {
         List<string> instructions = new List<string>();
-        var projectRoot = GetProjectRootDirectory();
+        var projectRoot = FileSystemHelper.GetProjectRootDirectory();
         var filePath = Path.Combine(projectRoot, "commands.csv");
 
         if (!File.Exists(filePath))
@@ -80,7 +80,7 @@ public partial class MainPage : ContentPage
 
         // Code below shared(or very similar to) other lines in class and in speechrecognitionservice.
         // should be implemented in seperate filesystem class
-        var projectRoot = GetProjectRootDirectory();
+        var projectRoot = FileSystemHelper.GetProjectRootDirectory();
         var filePath = Path.Combine(projectRoot, "commands.csv");
 
         if (!File.Exists(filePath))
@@ -117,24 +117,6 @@ public partial class MainPage : ContentPage
             }
         }
         return commands;
-    }
-
-    // Shared with SpeechRecognitionService, should be made to seperate filesystem class
-    public static string GetProjectRootDirectory()
-    {
-        DirectoryInfo? currentDirectory = new(AppContext.BaseDirectory);
-
-        while (currentDirectory != null && !currentDirectory.GetFiles("*.csproj").Any())
-        {
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        if (currentDirectory == null)
-        {
-            throw new DirectoryNotFoundException("Project root directory not found.");
-        }
-
-        return currentDirectory.FullName;
     }
 
     private async void Instructions_Clicked(object sender, EventArgs e)

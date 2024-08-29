@@ -1,15 +1,20 @@
+using System.Globalization;
+
 namespace Csharp2_VoiceAssistant;
 
 public partial class Instructions : ContentPage
 {
     private List<CsvItem> instructions;
+    List<CsvItem> shownInstructions;
 
     public Instructions()
 	{
 		InitializeComponent();
         InitializeCommandPicker();
         instructions = GetCSV();
-        CsvCollectionView.ItemsSource = instructions;
+        shownInstructions = instructions.ToList();
+        shownInstructions.Remove(instructions[0]);
+        CsvCollectionView.ItemsSource = shownInstructions;
     }
 
     private void InitializeCommandPicker()
@@ -49,9 +54,6 @@ public partial class Instructions : ContentPage
         var itemToDelete = (CsvItem)((ImageButton)sender).CommandParameter;
         instructions.Remove(itemToDelete);
 
-        CsvCollectionView.ItemsSource = null; // Refresh the CollectionView
-        CsvCollectionView.ItemsSource = instructions;
-
         SaveInstructionsToFile(); // Save updated list to file
     }
 
@@ -66,15 +68,12 @@ public partial class Instructions : ContentPage
 
         instructions.Remove(itemToEdit);
 
-        CsvCollectionView.ItemsSource = null;
-        CsvCollectionView.ItemsSource = instructions;
-
         SaveInstructionsToFile();
     }
 
     private void SaveInstructionsToFile()
     {
-        var projectRoot = GetProjectRootDirectory();
+        var projectRoot = FileSystemHelper.GetProjectRootDirectory();
         var filePath = Path.Combine(projectRoot, "commands.csv");
 
         using (var writer = new StreamWriter(filePath, append: false))
@@ -84,24 +83,33 @@ public partial class Instructions : ContentPage
                 writer.WriteLine($"{instruction.Column1},{instruction.Column2},{instruction.Column3}");
             }
         }
+
+        shownInstructions = instructions.ToList();
+        shownInstructions.Remove(shownInstructions[0]);
+        CsvCollectionView.ItemsSource = null; // Refresh the CollectionView
+        CsvCollectionView.ItemsSource = shownInstructions;
     }
 
-    public static void NewInstruction(string column1, string column2, string column3)
+    public void NewInstruction(string column1, string column2, string column3)
     {
-        var projectRoot = GetProjectRootDirectory();
+        var projectRoot = FileSystemHelper.GetProjectRootDirectory();
         var filePath = Path.Combine(projectRoot, "commands.csv");
 
         using (var writer = new StreamWriter(filePath, append: true))
         {
             writer.WriteLine($"{column1},{column2},{column3}");
         }
+        shownInstructions = instructions.ToList();
+        shownInstructions.Remove(shownInstructions[0]);
+        CsvCollectionView.ItemsSource = null; // Refresh the CollectionView
+        CsvCollectionView.ItemsSource = shownInstructions;
     }
 
 
     public List<CsvItem> GetCSV()
     {
         List<CsvItem> instructionList = new List<CsvItem>();
-        var projectRoot = GetProjectRootDirectory();
+        var projectRoot = FileSystemHelper.GetProjectRootDirectory();
         var filePath = Path.Combine(projectRoot, "commands.csv");
 
         if (!File.Exists(filePath))
@@ -122,22 +130,5 @@ public partial class Instructions : ContentPage
         }
 
         return instructionList;
-    }
-
-    public static string GetProjectRootDirectory()
-    {
-        DirectoryInfo? currentDirectory = new(AppContext.BaseDirectory);
-
-        while (currentDirectory != null && !currentDirectory.GetFiles("*.csproj").Any())
-        {
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        if (currentDirectory == null)
-        {
-            throw new DirectoryNotFoundException("Project root directory not found.");
-        }
-
-        return currentDirectory.FullName;
     }
 }

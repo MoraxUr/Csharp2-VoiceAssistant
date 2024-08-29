@@ -1,6 +1,7 @@
 phrase,command_type,parameter
 Monkey,OpenAppCommand,Spotify
-Test,ScreenBrightnessCommand,30
 steam,OpenAppCommand,Steam
-steam,ScreenBrightnessCommand,100
-Dancing queen,VolumeCommand,100
+steam,VolumeCommand,100
+Mute,VolumeCommand,0
+Sunshine,ScreenBrightnessCommand,100
+Darkness,ScreenBrightnessCommand,0

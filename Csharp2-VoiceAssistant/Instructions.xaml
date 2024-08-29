@@ -4,46 +4,87 @@
              x:Class="Csharp2_VoiceAssistant.Instructions"
              Title="Instructions">
 
-    <StackLayout Padding="10">
-
-        <!-- Form to Add New Instruction -->
-        <StackLayout Orientation="Vertical" Padding="10">
-            <Label Text="Add New Instruction" FontAttributes="Bold" />
-
-            <Entry x:Name="KeywordEntry" Placeholder="Enter Keyword (Column1)" />
-            <Picker x:Name="CommandPicker" Title="Select Command (Column2)" />
-            <Entry x:Name="Column3Entry" Placeholder="Enter value for Column3" />
-
-            <Button Text="Add Instruction" Clicked="OnAddInstructionClicked" />
-        </StackLayout>
-
+    <Grid Padding="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
         <!-- Display Instructions -->
-        <CollectionView x:Name="CsvCollectionView">
+        <CollectionView x:Name="CsvCollectionView"
+                        Grid.Column="0">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <StackLayout Orientation="Horizontal"
-                                 Padding="10">
-                        <Label Text="{Binding Column1}" />
-                        <Label Text="{Binding Column2}"
-                               Margin="20,0,0,0" />
-                        <Label Text="{Binding Column3}"
-                               Margin="20,0,0,0" />
-                        <!-- Trash icon to delete instruction -->
-                        <ImageButton Source="trash_icon.png"
-                                     Clicked="OnDeleteInstructionClicked"
-                                     CommandParameter="{Binding .}"
-                                     WidthRequest="24"
-                                     HeightRequest="24" />
+                                 Padding="10" >
+                        <Grid HorizontalOptions="FillAndExpand">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                        
+                        
+                        
+                        <Label Text="{Binding Column1}" Grid.Column="0" HorizontalOptions="Center"/>
+                            <Label Text="{Binding Column2}"
+                                   Grid.Column="1"
+                                   HorizontalOptions="Center" />
+                            <Label Text="{Binding Column3}"
+                                   Grid.Column="2"
+                                   HorizontalOptions="Center" />
+
                         <!-- Edit button -->
                         <ImageButton Source="edit_icon.png"
+                                     BackgroundColor="Aquamarine"
+                                     Grid.Column="3"
+                                     HorizontalOptions="End"
                                      Clicked="OnEditInstructionClicked"
                                      CommandParameter="{Binding .}"
                                      WidthRequest="24"
                                      HeightRequest="24" />
+
+                        <!-- Trash icon to delete instruction -->
+                        <ImageButton Source="trash_icon.png"
+                                     BackgroundColor="Red"
+                                     Grid.Column="4"
+                                     HorizontalOptions="End"
+                                     Clicked="OnDeleteInstructionClicked"
+                                     CommandParameter="{Binding .}"
+                                     WidthRequest="24"
+                                     HeightRequest="24" />
+                        </Grid>
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-    </StackLayout>
+
+        <!-- Form to Add New Instruction -->
+        <StackLayout Orientation="Vertical"
+                     Padding="10"
+                     Grid.Column="2">
+            <Label Text="Add New Instruction"
+                   FontAttributes="Bold" 
+                   Padding="10"/>
+
+            <Entry x:Name="KeywordEntry"
+                   Placeholder="Enter Keyword to listen for" 
+                   Margin="10"/>
+            <Picker x:Name="CommandPicker"
+                    Title="Select Command to be executed" 
+                    Margin="10"/>
+            <Entry x:Name="Column3Entry"
+                   Placeholder="Enter value for Command" 
+                   Margin="10"/>
+
+            <Button Text="Add Instruction"
+                    Clicked="OnAddInstructionClicked"
+                    Padding="10"/>
+        </StackLayout>
+
+    </Grid>
 
 </ContentPage>

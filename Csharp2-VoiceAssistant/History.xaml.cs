@@ -11,7 +11,7 @@ public partial class History : ContentPage
 
     public static void AddToHistory(string column1, string column2, string column3)
     {
-        var projectRoot = GetProjectRootDirectory();
+        var projectRoot = FileSystemHelper.GetProjectRootDirectory();
         var filePath = Path.Combine(projectRoot, "history.csv");
 
         using (var writer = new StreamWriter(filePath, append: true))
@@ -23,7 +23,7 @@ public partial class History : ContentPage
     public List<CsvItem> GetCSV()
     {
         List<CsvItem> history = new List<CsvItem>();
-        var projectRoot = GetProjectRootDirectory();
+        var projectRoot = FileSystemHelper.GetProjectRootDirectory();
         var filePath = Path.Combine(projectRoot, "history.csv");
 
         if (!File.Exists(filePath))
@@ -42,24 +42,50 @@ public partial class History : ContentPage
                 Column3 = values[2]
             });
         }
+        List<CsvItem> cleaned = new List<CsvItem>();
 
-        return history;
+        foreach (var item in history)
+        {
+            if (item.Column1.Equals("timestamp"))
+            {
+                cleaned.Add(item);
+            }
+            else
+            {
+                DateTime itemTime = DateTime.Parse(item.Column1);
+                DateTime now = DateTime.Now;
+                if ((now - itemTime).Days <= 5)
+                {
+                    cleaned.Add(item);
+
+                }
+            }
+        }
+
+        overwriteHistory(cleaned);
+
+        return cleaned;
     }
 
-    public static string GetProjectRootDirectory()
+    public void overwriteHistory(List<CsvItem> list)
     {
-        DirectoryInfo? currentDirectory = new(AppContext.BaseDirectory);
+        var projectRoot = FileSystemHelper.GetProjectRootDirectory();
+        var filePath = Path.Combine(projectRoot, "history.csv");
 
-        while (currentDirectory != null && !currentDirectory.GetFiles("*.csproj").Any())
+        using (var writer = new StreamWriter(filePath, append: false))
         {
-            currentDirectory = currentDirectory.Parent;
+            writer.WriteLine($"{list[0].Column1},{list[0].Column2},{list[0].Column3}");
         }
 
-        if (currentDirectory == null)
+        foreach (var item in list)
         {
-            throw new DirectoryNotFoundException("Project root directory not found.");
+            if(item != list[0])
+            {
+                using (var writer = new StreamWriter(filePath, append: true))
+                {
+                    writer.WriteLine($"{item.Column1},{item.Column2},{item.Column3}");
+                }
+            }
         }
-
-        return currentDirectory.FullName;
     }
 }

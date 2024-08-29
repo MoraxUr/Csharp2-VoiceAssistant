@@ -7,13 +7,44 @@
     <CollectionView x:Name="CsvCollectionView">
         <CollectionView.ItemTemplate>
             <DataTemplate>
-                <StackLayout Orientation="Horizontal"
-                             Padding="10">
-                    <Label Text="{Binding Column1}" />
-                    <Label Text="{Binding Column2}"
-                           Margin="20,0,0,0" />
-                    <Label Text="{Binding Column3}"
-                           Margin="20,0,0,0" />
+                <StackLayout HorizontalOptions="Center">
+                    <Grid HorizontalOptions="Center" RowSpacing="0" ColumnSpacing="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="175" />
+                            <ColumnDefinition Width="175" />
+                            <ColumnDefinition Width="175" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Stroke="red"
+                                StrokeThickness="1"
+                                Grid.Column="0"
+                                Grid.Row="0">
+                            <Label Text="{Binding Column1}"
+                                   HorizontalOptions="Start"
+                                   VerticalOptions="Center"
+                                   Padding="5" />
+                        </Border>
+
+                        <Border Stroke="Red"
+                                StrokeThickness="1"
+                                Grid.Column="1"
+                                Grid.Row="0">
+                            <Label Text="{Binding Column2}"
+                                   HorizontalOptions="Start"
+                                   VerticalOptions="Center"
+                                   Padding="5" />
+                        </Border>
+
+                        <Border Stroke="Red"
+                                StrokeThickness="1"
+                                Grid.Column="2"
+                                Grid.Row="0">
+                            <Label Text="{Binding Column3}"
+                                   HorizontalOptions="Start"
+                                   VerticalOptions="Center"
+                                   Padding="5" />
+                        </Border>
+                    </Grid>
                 </StackLayout>
             </DataTemplate>
         </CollectionView.ItemTemplate>

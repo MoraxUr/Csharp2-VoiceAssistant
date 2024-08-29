@@ -1,13 +1,7 @@
 ﻿namespace Csharp2_VoiceAssistant
 {
-    public class CSVHelperService
+    public class FileSystemHelper
     {
-        public CSVHelperService()
-        {
-            string csvPath = GetCSVPath();
-            
-        }
-
         public static string GetProjectRootDirectory()
         {
             DirectoryInfo? currentDirectory = new(AppContext.BaseDirectory);
@@ -23,19 +17,6 @@
             }
 
             return currentDirectory.FullName;
-        }
-
-        public static string GetCSVPath()
-        {
-            var projectRoot = GetProjectRootDirectory();
-            var csvPath = Path.Combine(projectRoot, "Instructions", "Instructions.csv");
-
-            if (!Directory.Exists(csvPath))
-            {
-                // Make CSV if not present
-            }
-
-            return csvPath;
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using NAudio.Mixer;
-using NAudio.Wave;
+﻿using NAudio.Wave;
 using System.Diagnostics;
 using System.Text.Json;
 using Vosk;
@@ -8,6 +7,11 @@ namespace Csharp2_VoiceAssistant
 {
     public class SpeechRecognitionService
     {
+        private const float SAMPLE_RATE = 16000.0f;
+        private const int SAMPLE_RATE_INT = 16000;
+        private const int CHANNELS = 1;
+        private const int MILLISECONDS_PER_SECOND = 1000;
+
         private readonly VoskRecognizer _recognizer;
         private bool _foundLaptop = false;
         private TaskCompletionSource<bool> _taskCompletionSource;
@@ -19,31 +23,13 @@ namespace Csharp2_VoiceAssistant
             Model model = new(modelPath);
 
             // Initialize recognizer
-            _recognizer = new VoskRecognizer(model, 16000.0f);
-        }
-
-        // Loop to find project root directory independent of device
-        public static string GetProjectRootDirectory()
-        {
-            DirectoryInfo? currentDirectory = new(AppContext.BaseDirectory);
-
-            while (currentDirectory != null && !currentDirectory.GetFiles("*.csproj").Any())
-            {
-                currentDirectory = currentDirectory.Parent;
-            }
-
-            if (currentDirectory == null)
-            {
-                throw new DirectoryNotFoundException("Project root directory not found.");
-            }
-
-            return currentDirectory.FullName;
+            _recognizer = new VoskRecognizer(model, SAMPLE_RATE);
         }
 
         // Method to set model (should be expanded to include language paramaters)
         public static string GetModelPath()
         {
-            var projectRoot = GetProjectRootDirectory();
+            var projectRoot = FileSystemHelper.GetProjectRootDirectory();
             var modelPath = Path.Combine(projectRoot, "Models", "vosk-model-small-en-us-0.15");
             //var modelPath = Path.Combine(projectRoot, "Models", "vosk-model-nl-spraakherkenning-0.6");
 
@@ -64,7 +50,7 @@ namespace Csharp2_VoiceAssistant
 
             var waveIn = new WaveInEvent
             {
-                WaveFormat = new WaveFormat(16000, 1)
+                WaveFormat = new WaveFormat(SAMPLE_RATE_INT, CHANNELS)
             };
 
             waveIn.DataAvailable += OnDataAvailable;
@@ -107,7 +93,7 @@ namespace Csharp2_VoiceAssistant
         {
             var waveIn = new WaveInEvent
             {
-                WaveFormat = new WaveFormat(16000, 1)
+                WaveFormat = new WaveFormat(SAMPLE_RATE_INT, CHANNELS)
             };
 
             waveIn.StartRecording();
@@ -121,7 +107,7 @@ namespace Csharp2_VoiceAssistant
                 }
             };
 
-            await Task.Delay(durationInSeconds * 1000);
+            await Task.Delay(durationInSeconds * MILLISECONDS_PER_SECOND);
             waveIn.StopRecording();
 
             for (int i = 0; i < commands.Count; i++)
