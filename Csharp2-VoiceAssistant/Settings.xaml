@@ -4,4 +4,33 @@
              x:Class="Csharp2_VoiceAssistant.Settings"
              Title="Settings">
 
+    <StackLayout Padding="20">
+        <Label Text="Language"
+               FontSize="18" />
+        <Picker x:Name="LanguagePicker"
+                Title="Select Language">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>en</x:String>
+                    <x:String>nl</x:String>
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
+
+        <Label Text="Command Recognition Duration (Seconds)"
+               FontSize="18"
+               Margin="0,20,0,0" />
+        <Entry x:Name="DurationEntry"
+               Keyboard="Numeric" />
+
+        <Label Text="History Retention Days"
+               FontSize="18"
+               Margin="0,20,0,0" />
+        <Entry x:Name="RetentionEntry"
+               Keyboard="Numeric" />
+
+        <Button Text="Save"
+                Clicked="OnSaveButtonClicked"
+                Margin="0,20,0,0" />
+    </StackLayout>
 </ContentPage>

@@ -54,7 +54,7 @@ public partial class History : ContentPage
             {
                 DateTime itemTime = DateTime.Parse(item.Column1);
                 DateTime now = DateTime.Now;
-                if ((now - itemTime).Days <= 5)
+                if ((now - itemTime).Days <= AppSettings.HistoryRetentionDays)
                 {
                     cleaned.Add(item);
 

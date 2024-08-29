@@ -30,9 +30,16 @@ namespace Csharp2_VoiceAssistant
         public static string GetModelPath()
         {
             var projectRoot = FileSystemHelper.GetProjectRootDirectory();
-            var modelPath = Path.Combine(projectRoot, "Models", "vosk-model-small-en-us-0.15");
-            //var modelPath = Path.Combine(projectRoot, "Models", "vosk-model-nl-spraakherkenning-0.6");
-
+            string modelPath;
+            if (AppSettings.Language == "NL")
+            {
+                modelPath = Path.Combine(projectRoot, "Models", "vosk-model-nl-spraakherkenning-0.6");
+            }
+            else
+            {
+                modelPath = Path.Combine(projectRoot, "Models", "vosk-model-small-en-us-0.15");
+            }
+            
             if (!Directory.Exists(modelPath))
             {
                 throw new DirectoryNotFoundException($"The model directory at {modelPath} was not found.");
@@ -89,7 +96,7 @@ namespace Csharp2_VoiceAssistant
         }
 
         // Tries to find matching word after laptop is called
-        public async Task<int> MatchCommandAsync(List<string> commands, int durationInSeconds = 8)
+        public async Task<int> MatchCommandAsync(List<string> commands)
         {
             var waveIn = new WaveInEvent
             {
@@ -107,7 +114,7 @@ namespace Csharp2_VoiceAssistant
                 }
             };
 
-            await Task.Delay(durationInSeconds * MILLISECONDS_PER_SECOND);
+            await Task.Delay(AppSettings.CommandRecognitionDurationInSeconds * MILLISECONDS_PER_SECOND);
             waveIn.StopRecording();
 
             for (int i = 0; i < commands.Count; i++)
