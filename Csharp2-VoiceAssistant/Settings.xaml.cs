@@ -14,6 +14,14 @@ public partial class Settings : ContentPage
         LanguagePicker.SelectedItem = AppSettings.Language;
         DurationEntry.Text = AppSettings.CommandRecognitionDurationInSeconds.ToString();
         RetentionEntry.Text = AppSettings.HistoryRetentionDays.ToString();
+        if (AppSettings.IsSpeakerEnabled)
+        {
+            YesRadioButton.IsChecked = true;
+        }
+        else
+        {
+            NoRadioButton.IsChecked = true;
+        }
     }
 
     private void OnSaveButtonClicked(object sender, EventArgs e)
@@ -34,7 +42,16 @@ public partial class Settings : ContentPage
         AppSettings.Language = LanguagePicker.SelectedItem.ToString();
         AppSettings.CommandRecognitionDurationInSeconds = duration;
         AppSettings.HistoryRetentionDays = retentionDays;
+        if (YesRadioButton.IsChecked)
+        {
+            AppSettings.IsSpeakerEnabled = true;
+        }
+        else
+        {
+            AppSettings.IsSpeakerEnabled = false;
+        }
 
+        AppSettings.SaveSettings();
         DisplayAlert("Success", "Settings have been updated.", "OK");
     }
 }

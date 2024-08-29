@@ -1,7 +1,5 @@
 phrase,command_type,parameter
-Monkey,OpenAppCommand,Spotify
-steam,OpenAppCommand,Steam
-steam,VolumeCommand,100
-Mute,VolumeCommand,0
-Sunshine,ScreenBrightnessCommand,100
-Darkness,ScreenBrightnessCommand,0
+Luid,VolumeCommand,100
+Zacht,VolumeCommand,50
+Donker,ScreenBrightnessCommand,0
+Zon,ScreenBrightnessCommand,100

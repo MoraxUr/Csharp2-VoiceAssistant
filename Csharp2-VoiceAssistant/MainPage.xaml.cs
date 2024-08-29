@@ -9,6 +9,7 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
+        AppSettings.LoadSettings();
         _speechRecognitionService = new SpeechRecognitionService();
         Listen();
     }
