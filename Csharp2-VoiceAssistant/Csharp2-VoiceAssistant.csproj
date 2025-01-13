@@ -91,4 +91,7 @@
 	  </MauiXaml>
 	</ItemGroup>
 
+	<PropertyGroup>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+	</PropertyGroup>
 </Project>

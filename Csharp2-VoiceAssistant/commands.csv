@@ -3,3 +3,4 @@ Luid,VolumeCommand,100
 Zacht,VolumeCommand,50
 Donker,ScreenBrightnessCommand,0
 Zon,ScreenBrightnessCommand,100
+Muziek,OpenAppCommand,Spotify
